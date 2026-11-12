@@ -1,0 +1,42 @@
+name: Build Android APK
+on:
+  push:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Install
+        run: npm install
+      - name: Add Android
+        run: npx cap add android
+      - name: Icon
+        run: |
+          if [ -f assets/logo.png ]; then npx capacitor-assets generate --android --iconBackgroundColor '#2b4fa8' --iconBackgroundColorDark '#2b4fa8' --splashBackgroundColor '#2b4fa8' --splashBackgroundColorDark '#2b4fa8' || echo 'icon skipped'; fi
+      - name: Permissions
+        run: |
+          if [ -s permissions.txt ]; then sed -i '/<application/e cat permissions.txt' android/app/src/main/AndroidManifest.xml; fi
+      - name: Native look
+        run: |
+          mkdir -p android/app/src/main/java/com/appify/oselfitai && cp native/MainActivity.java android/app/src/main/java/com/appify/oselfitai/MainActivity.java
+          sed -i '/name="AppTheme.NoActionBar"/a <item name="android:navigationBarColor">#0b1416</item>' android/app/src/main/res/values/styles.xml || echo 'nav bar skipped'
+      - name: Sync
+        run: npx cap sync android
+      - name: Build
+        run: cd android && chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk app.apk
+          gh release create "apk-${{ github.run_number }}" app.apk --title "Android app" --notes "Android APK"
