@@ -1,0 +1,43 @@
+{
+  "appId": "com.appify.oselfitai",
+  "appName": "OselFit Ai",
+  "webDir": "www",
+  "server": {
+    "url": "https://oselfit.chantan.one",
+    "cleartext": false,
+    "allowNavigation": [
+      "oselfit.chantan.one",
+      "*.oselfit.chantan.one"
+    ],
+    "errorPath": "offline.html"
+  },
+  "backgroundColor": "#2b4fa8",
+  "appendUserAgent": "AppifyApp",
+  "zoomEnabled": false,
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1800,
+      "launchAutoHide": true,
+      "backgroundColor": "#2b4fa8",
+      "showSpinner": false,
+      "androidScaleType": "CENTER_CROP",
+      "splashFullScreen": false,
+      "splashImmersive": false
+    },
+    "StatusBar": {
+      "overlaysWebView": false,
+      "backgroundColor": "#0b1416",
+      "style": "DARK"
+    },
+    "PushNotifications": {
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
+    }
+  },
+  "android": {
+    "webContentsDebuggingEnabled": false
+  }
+}
